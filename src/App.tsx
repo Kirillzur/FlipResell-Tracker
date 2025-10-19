@@ -1,13 +1,12 @@
 import './App.css'
-import { Button } from '@chakra-ui/react'
+import NavBar from './Component/NavBar'
 
 
 function App() {
   
   return (
     <>
-      <h2>kdosakda</h2>
-      <Button variant='solid'>Click me</Button>
+      <NavBar />
     </>
   )
 }
