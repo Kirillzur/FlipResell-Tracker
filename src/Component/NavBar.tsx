@@ -18,12 +18,8 @@ const NavBar = () => {
           base: "0.8px solid #E5E7EB", // only bottom border on small screens
         }}
       >
-        <Box>
-          <Heading size="xl">FlipResell-Tracker</Heading>
-        </Box>
-        <Box>
-          <Button borderRadius={12}>+ Add Item</Button>
-        </Box>
+        <Heading size="xl">FlipResell-Tracker</Heading>
+        <Button borderRadius={12}>+ Add Item</Button>
       </Flex>
     </>
   );

@@ -4,5 +4,11 @@
   margin: 0 auto;
 }
 
+@media screen and (max-width: 1080px) {
+  .page--container {
+    margin: 0 16px;
+  }
+}
+
 
 
