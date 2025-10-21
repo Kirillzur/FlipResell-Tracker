@@ -1,3 +1,12 @@
+:root {
+    --primary-color: #111827;
+    --secondary-color: #6B7280;
+    --white-color: #FFF;
+    --green-color: #10B981;
+    --border-radius: 16px;
+    --border-color: 1px solid #E5E7EB;
+}
+
 body {
     background-color: #F9FAFB;
 }

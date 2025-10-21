@@ -1,21 +1,21 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, Text } from "@chakra-ui/react";
 
 const HeaderBox = () => {
   return (
     <Box
       textAlign="left"
       className="page--container"
-      bg="#FFFFFF"
+      bg= "var(--white-color)"
       maxW={{ base: "calc(100% - 32px)", lg: "full" }}
       p="4"
-      color="#10B981"
-      border="0.8px solid #E5E7EB"
-      borderRadius={16}
+      color="var(--green-color)"
+      border="var(--border-color)"
+      borderRadius="var(--border-radius)"
       mt="4"
     >
-      <Heading mb="1" color="#6B7280" size="xs">
+      <Text mb="1" color="var(--secondary-color)" fontSize="xs">
         Revenue (30 days)
-      </Heading>
+      </Text>
       <Heading size="2xl">€8,420</Heading>
     </Box>
   );

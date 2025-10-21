@@ -1,6 +1,7 @@
 import './App.css'
 import NavBar from './Component/NavBar'
 import HeaderBox from './Component/HeaderBox'
+import ItemBox from './Component/ItemBox'
 
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
     <>
       <NavBar />
       <HeaderBox />
+      <ItemBox />
     </>
   )
 }

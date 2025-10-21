@@ -1,4 +1,5 @@
-import { Heading, Box, Flex, Button } from "@chakra-ui/react";
+import { Heading, Flex, Button } from "@chakra-ui/react";
+
 
 const NavBar = () => {
   return (
@@ -7,19 +8,19 @@ const NavBar = () => {
         justify="space-between"
         h="20"
         w="100%"
-        bg="#FFFFFF"
+        bg= "var(--white-color)"
         align="center"
         padding="16px"
         border={{
           base: "none", // no full border on small screens
-          lg: "0.8px solid #E5E7EB", // full border on large screens
+          lg: "var(--border-color)", // full border on large screens
         }}
         borderBottom={{
-          base: "0.8px solid #E5E7EB", // only bottom border on small screens
+          base: "var(--border-color)", // only bottom border on small screens
         }}
       >
         <Heading size="xl">FlipResell-Tracker</Heading>
-        <Button borderRadius={12}>+ Add Item</Button>
+        <Button  borderRadius="var(--border-radius)">+ Add Item</Button>
       </Flex>
     </>
   );
