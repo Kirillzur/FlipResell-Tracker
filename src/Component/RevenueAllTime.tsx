@@ -1,6 +1,6 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
 
-const HeaderBox = () => {
+const RevenueAllTime = () => {
   return (
     <Box
       textAlign="left"
@@ -14,11 +14,11 @@ const HeaderBox = () => {
       mt="4"
     >
       <Text mb="1" color="var(--secondary-color)" fontSize="xs">
-        Revenue (30 days)
+        Revenue (All time)
       </Text>
-      <Heading size="2xl">€8,420</Heading>
+      <Heading size="2xl">€12,530</Heading>
     </Box>
   );
 };
 
-export default HeaderBox;
+export default RevenueAllTime;

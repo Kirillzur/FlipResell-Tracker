@@ -1,7 +1,9 @@
 import './App.css'
 import NavBar from './Component/NavBar'
-import HeaderBox from './Component/HeaderBox'
 import ItemBox from './Component/ItemBox'
+import RevenueMonth from './Component/RevenueMonth'
+import RevenueAllTime from './Component/RevenueAllTime'
+import TotalSold from './Component/TotalSold'
 
 
 function App() {
@@ -9,7 +11,9 @@ function App() {
   return (
     <>
       <NavBar />
-      <HeaderBox />
+      <RevenueMonth />
+      <RevenueAllTime />
+      <TotalSold />
       <ItemBox />
     </>
   )
