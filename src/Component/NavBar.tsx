@@ -1,7 +1,10 @@
 import { Heading, Flex, Button } from "@chakra-ui/react";
 
+interface NavBarProps {
+  onAddClick: () => void;
+}
 
-const NavBar = () => {
+const NavBar = ({ onAddClick }: NavBarProps) => {
   return (
     <>
       <Flex
@@ -20,7 +23,7 @@ const NavBar = () => {
         }}
       >
         <Heading size="xl">FlipResell-Tracker</Heading>
-        <Button  borderRadius="var(--border-radius)">+ Add Item</Button>
+        <Button  borderRadius="var(--border-radius)" onClick={onAddClick}>+ Add Item</Button>
       </Flex>
     </>
   );
