@@ -1,6 +1,6 @@
 import { Heading, Flex, Button } from "@chakra-ui/react";
 
-interface NavBarProps {
+export interface NavBarProps {
   onAddClick: () => void;
 }
 

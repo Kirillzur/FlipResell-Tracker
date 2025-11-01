@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   Box,
   Flex,
@@ -8,28 +8,27 @@ import {
   Heading,
   VStack,
   Button,
+  CloseButton,
   Input,
 } from "@chakra-ui/react";
 import type { Item } from "./types";
 
-interface AddItemModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+export type FormState = {
+  name: string;
+  price: string;
+  sellPrice: string;
+  date: string;
+  sellDate: string;
+};
+
+export interface AddItemModalProps {
   onSave: (item: Item) => void;
+  onClose: () => void;
+  form: FormState;
+  setForm: React.Dispatch<React.SetStateAction<FormState>>;
 }
 
-export const AddItemModal = ({
-  onClose,
-  onSave,
-}: AddItemModalProps) => {
-  const [form, setForm] = useState({
-    name: "",
-    price: "",
-    sellPrice: "",
-    date: "",
-    sellDate: "",
-  });
-
+export const AddItemModal = ({ onSave, onClose, form, setForm }: AddItemModalProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
@@ -49,7 +48,7 @@ export const AddItemModal = ({
   }, [form.date, form.sellDate]);
 
   const handleSave = () => {
-    if (!form.name || !form.price || !form.date) return; // minimal guard
+    if (!form.name || !form.price || !form.date) return alert("Please fill all required fields, including Name, BuyPrice, and BuyDate."); // minimal guard
     const item: Item = {
       id: crypto.randomUUID(),
       name: form.name.trim(),
@@ -59,6 +58,10 @@ export const AddItemModal = ({
       sellDate: form.sellDate || undefined,
     };
     onSave(item);
+  };
+
+  const handleClose = () => {
+    onClose();
   };
 
   return (
@@ -91,6 +94,7 @@ export const AddItemModal = ({
           >
             Save
           </Button>
+          <CloseButton onClick={handleClose} />
         </Flex>
       </Flex>
 
@@ -135,7 +139,7 @@ export const AddItemModal = ({
                 name="price"
                 value={form.price}
                 onChange={handleChange}
-                placeholder="Buy Price (€)"
+                placeholder="Buy Price (£)"
               />
             </Box>
 
@@ -148,7 +152,7 @@ export const AddItemModal = ({
                 name="sellPrice"
                 value={form.sellPrice}
                 onChange={handleChange}
-                placeholder="Sell Price (€)"
+                placeholder="Sell Price (£)"
               />
             </Box>
           </Flex>
@@ -161,6 +165,7 @@ export const AddItemModal = ({
               <Input
                 type="date"
                 name="date"
+                cursor="pointer"
                 value={form.date}
                 onChange={handleChange}
               />
@@ -173,6 +178,7 @@ export const AddItemModal = ({
               <Input
                 type="date"
                 name="sellDate"
+                cursor="pointer"
                 value={form.sellDate}
                 onChange={handleChange}
               />
@@ -191,7 +197,7 @@ export const AddItemModal = ({
             {daysHeld != null ? `${daysHeld} days` : "Not sold"}
           </Badge>
           <Text fontWeight="bold" fontSize="lg" color="var(--green-color)">
-            {profit != null ? `€${profit.toFixed(2)}` : "—"}
+            {profit != null ? `£${profit.toFixed(2)}` : "—"}
           </Text>
         </Flex>
       </Box>
