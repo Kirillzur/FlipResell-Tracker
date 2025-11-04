@@ -1,6 +1,10 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
 
-const TotalSold = () => {
+export interface TotalSoldProps {
+  count: number;
+}
+
+const TotalSold = ({ count }: TotalSoldProps) => {
   return (
     <Box
       textAlign="left"
@@ -16,7 +20,7 @@ const TotalSold = () => {
       <Text mb="1" color="var(--secondary-color)" fontSize="xs">
         Total Items Sold
       </Text>
-      <Heading size="2xl">37</Heading>
+      <Heading size="2xl">{count}</Heading>
     </Box>
   );
 };

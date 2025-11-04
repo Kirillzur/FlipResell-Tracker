@@ -1,6 +1,18 @@
-import { Box, Flex, Text, Badge, Stack, Heading, VStack, Button, IconButton } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  Badge,
+  Stack,
+  Heading,
+  VStack,
+  Button,
+  IconButton,
+  Menu,
+} from "@chakra-ui/react";
 import type { Item } from "./types";
 import { FiMoreVertical } from "react-icons/fi";
+import { MdDelete, MdEdit } from "react-icons/md";
 
 const fmtAmount = (n?: number) =>
   typeof n === "number" && !Number.isNaN(n) ? `£${n.toFixed(2)}` : "—";
@@ -15,9 +27,11 @@ const daysBetween = (start?: string, end?: string) => {
 
 interface ItemBoxProps {
   items: Item[];
+  onEdit?: (item: Item) => void;
+  onDelete?: (item: Item) => void;
 }
 
-const ItemBox = ({ items }: ItemBoxProps) => {
+const ItemBox = ({ items, onEdit, onDelete }: ItemBoxProps) => {
   const recent = items.slice(0, 3);
 
   return (
@@ -71,12 +85,15 @@ const ItemBox = ({ items }: ItemBoxProps) => {
           p={5}
           boxShadow="sm"
         >
-          <Text color="var(--secondary-color)">No items yet. Add your first item.</Text>
+          <Text color="var(--secondary-color)">
+            No items yet. Add your first item.
+          </Text>
         </Box>
       ) : (
         <Stack gap={4}>
           {recent.map((it) => {
-            const profit = it.sellPrice != null ? it.sellPrice - it.price : undefined;
+            const profit =
+              it.sellPrice != null ? it.sellPrice - it.price : undefined;
             const daysHeld = daysBetween(it.date, it.sellDate);
             const mainAmount = it.sellPrice ?? it.price;
 
@@ -93,44 +110,97 @@ const ItemBox = ({ items }: ItemBoxProps) => {
                 <Flex justify="space-between" align="start">
                   <Box>
                     <Heading size="md">{it.name}</Heading>
-                    <Text mt={1} fontSize="sm" textAlign="left" color="var(--secondary-color)">
+                    <Text
+                      mt={1}
+                      fontSize="sm"
+                      textAlign="left"
+                      color="var(--secondary-color)"
+                    >
                       {fmtAmount(mainAmount)}
                     </Text>
                   </Box>
-                  <Text fontSize="2xl" fontWeight="bold">
-                    {fmtAmount(mainAmount)}
-                    <IconButton aria-label= "Delete Item" size="xs" marginLeft="10px" variant="outline" mb="4px">
-                      <FiMoreVertical />
-                    </IconButton>
-                  </Text>
+                  <Flex position="relative" align="center">
+                    <Text fontSize="2xl" fontWeight="bold">
+                      {fmtAmount(mainAmount)}
+                    </Text>
+                    <Menu.Root>
+                      <Menu.Trigger asChild>
+                        <IconButton
+                          aria-label="Open item menu"
+                          size="xs"
+                          variant="outline"
+                          ml="10px"
+                        >
+                          <FiMoreVertical />
+                        </IconButton>
+                      </Menu.Trigger>
+                      <Menu.Content
+                        position="absolute"
+                        top="100%"
+                        right="0"
+                        minW="180px"                
+                        zIndex={1}
+                      >
+                        <Menu.Item  cursor="pointer" value="Edit" onClick={() => onEdit?.(it)}>
+                          <MdEdit />
+                          <Box>Edit</Box>
+                        </Menu.Item>
+                        <Menu.Item color="fg.error" cursor="pointer" value="Delete" onClick={() => onDelete?.(it)}>
+                          <MdDelete />
+                          <Box>Delete...</Box>
+                        </Menu.Item>
+                      </Menu.Content>
+                    </Menu.Root>
+                  </Flex>
                 </Flex>
 
                 {/* Middle Info */}
                 <Stack mt={4}>
                   <Flex justify="space-between">
                     <Text fontSize="sm" color="var(--secondary-color)">
-                      Buy: <Text as="span" color="var(--primary-color)">{fmtAmount(it.price)}</Text>
+                      Buy:{" "}
+                      <Text as="span" color="var(--primary-color)">
+                        {fmtAmount(it.price)}
+                      </Text>
                     </Text>
                     <Text fontSize="sm" color="var(--secondary-color)">
-                      Sell: <Text as="span" color="var(--primary-color)">{fmtAmount(it.sellPrice)}</Text>
+                      Sell:{" "}
+                      <Text as="span" color="var(--primary-color)">
+                        {fmtAmount(it.sellPrice)}
+                      </Text>
                     </Text>
                   </Flex>
                   <Flex justify="space-between">
                     <Text fontSize="sm" color="var(--secondary-color)">
-                      Buy date: <Text as="span" color="var(--primary-color)">{it.date || "—"}</Text>
+                      Buy date:{" "}
+                      <Text as="span" color="var(--primary-color)">
+                        {it.date || "—"}
+                      </Text>
                     </Text>
                     <Text fontSize="sm" color="var(--secondary-color)">
-                      Sell date: <Text as="span" color="var(--primary-color)">{it.sellDate || "—"}</Text>
+                      Sell date:{" "}
+                      <Text as="span" color="var(--primary-color)">
+                        {it.sellDate || "—"}
+                      </Text>
                     </Text>
                   </Flex>
                 </Stack>
 
                 {/* Bottom Row: Days + Profit */}
                 <Flex justify="space-between" align="center" mt={4}>
-                  <Badge px={3} py={1} borderRadius="var(--border-radius)" colorScheme="gray">
+                  <Badge
+                    px={3}
+                    py={1}
+                    borderRadius="var(--border-radius)"
+                    colorScheme="gray"
+                  >
                     {daysHeld != null ? `${daysHeld} days` : "Not sold"}
                   </Badge>
-                  <Text fontWeight="bold" fontSize="lg" color="var(--green-color)">
+                  <Text
+                    fontWeight="bold"
+                    fontSize="lg"
+                    color="var(--green-color)"
+                  >
                     {fmtAmount(profit)}
                   </Text>
                 </Flex>
