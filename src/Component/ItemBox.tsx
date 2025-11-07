@@ -29,9 +29,10 @@ interface ItemBoxProps {
   items: Item[];
   onEdit?: (item: Item) => void;
   onDelete?: (item: Item) => void;
+  onOpenPage?: () => void;
 }
 
-const ItemBox = ({ items, onEdit, onDelete }: ItemBoxProps) => {
+const ItemBox = ({ items, onEdit, onDelete, onOpenPage }: ItemBoxProps) => {
   const recent = items.slice(0, 3);
 
   return (
@@ -57,6 +58,7 @@ const ItemBox = ({ items, onEdit, onDelete }: ItemBoxProps) => {
         </Box>
         <Flex direction={{ base: "column", sm: "row" }} gap={3}>
           <Button
+            onClick={onOpenPage}
             fontSize="xs"
             borderRadius="var(--border-radius)"
             w={{ base: "full", sm: "auto" }}

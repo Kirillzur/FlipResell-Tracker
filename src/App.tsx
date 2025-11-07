@@ -8,6 +8,8 @@ import RevenueAllTime from './Component/RevenueAllTime'
 import TotalSold from './Component/TotalSold'
 import AddItemModal, { type FormState } from './Component/AddItemModal'
 import type { Item } from './Component/types'
+import { useNavigate } from "react-router-dom";
+
 
 const initialForm: FormState = {
   name: '',
@@ -23,6 +25,12 @@ const FORM_KEY = 'flipresell:form'
 function App() {
   const { open, onOpen, onClose } = useDisclosure()
   const [editingId, setEditingId] = useState<string | null>(null)
+  const navigate = useNavigate();
+
+  // Navigation to AllSales page 
+  const openSalesPage = () => {
+    navigate("/allSales")
+  }
 
   // Initialize from localStorage synchronously
   const [form, setForm] = useState<FormState>(() => {
@@ -144,7 +152,7 @@ function App() {
       <RevenueMonth amount={revenue30Days} />
       <RevenueAllTime amount={revenueAllTime} />
       <TotalSold count={items.filter((it) => it.sellPrice != null || it.sellDate != null).length} />
-      <ItemBox items={items} onEdit={handleEdit} onDelete={handleDelete} />
+      <ItemBox   onOpenPage={openSalesPage} items={items} onEdit={handleEdit} onDelete={handleDelete} />
     </>
   )
 }
