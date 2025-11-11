@@ -10,6 +10,7 @@ import AddItemModal, { type FormState } from "./Component/AddItemModal";
 import type { Item } from "./Component/types";
 import { useNavigate, Routes, Route, Navigate } from "react-router-dom";
 import AllSales from "./pages/AllSales";
+import { subscribeItems, saveItem, deleteItemById } from "./services/items";
 
 const initialForm: FormState = {
   name: "",
@@ -19,7 +20,6 @@ const initialForm: FormState = {
   sellDate: "",
 };
 
-const ITEMS_KEY = "flipresell:items";
 const FORM_KEY = "flipresell:form";
 
 function App() {
@@ -42,25 +42,22 @@ function App() {
     }
   });
 
-  const [items, setItems] = useState<Item[]>(() => {
-    try {
-      const raw = localStorage.getItem(ITEMS_KEY);
-      return raw ? (JSON.parse(raw) as Item[]) : [];
-    } catch {
-      return [];
-    }
-  });
+  // Items now live in Firestore only
+  const [items, setItems] = useState<Item[]>([]);
 
   // Persist on change
-  useEffect(() => {
-    localStorage.setItem(ITEMS_KEY, JSON.stringify(items));
-  }, [items]);
   useEffect(() => {
     localStorage.setItem(FORM_KEY, JSON.stringify(form));
   }, [form]);
 
+  // Subscribe to Firestore when enabled
+  useEffect(() => {
+    const unsub = subscribeItems(setItems);
+    return () => unsub();
+  }, []);
+
   // Derived revenue metrics
-  const revenueAllTime = useMemo(() => {
+ const revenueAllTime = useMemo(() => {
     return items.reduce((sum, it) => {
       if (it.sellPrice != null) {
         return sum + (it.sellPrice - it.price);
@@ -104,19 +101,6 @@ function App() {
     onOpen();
   };
 
-  const handleDelete = (item: Item) => {
-    const ok = window.confirm(
-      `Are you sure you want to delete "${item.name}"?`
-    );
-    if (!ok) return;
-    setItems((prev) => prev.filter((it) => it.id !== item.id));
-    if (editingId === item.id) {
-      setEditingId(null);
-      setForm(initialForm);
-      onClose();
-    }
-  };
-
   return (
     <Routes>
       <Route
@@ -126,29 +110,22 @@ function App() {
             <NavBar onAddClick={handleAddClick} />
             {open && (
               <AddItemModal
-                onSave={(item) => {
-                  if (editingId) {
-                    setItems((prev) =>
-                      prev.map((it) =>
-                        it.id === editingId
-                          ? {
-                              ...it,
-                              id: editingId,
-                              name: item.name,
-                              price: item.price,
-                              sellPrice: item.sellPrice,
-                              date: item.date,
-                              sellDate: item.sellDate,
-                            }
-                          : it
-                      )
+                onSave={async (item) => {
+                  try {
+                    if (editingId) {
+                      await saveItem({ ...item, id: editingId });
+                    } else {
+                      await saveItem(item);
+                    }
+                    setForm(initialForm);
+                    setEditingId(null);
+                    onClose();
+                  } catch (e: any) {
+                    console.error('Failed to save item', e);
+                    alert(
+                      e?.message || 'Failed to save item. Check Firebase config and rules.'
                     );
-                  } else {
-                    setItems((prev) => [item, ...prev]);
                   }
-                  setForm(initialForm);
-                  setEditingId(null);
-                  onClose();
                 }}
                 onClose={onClose}
                 form={form}
@@ -168,7 +145,25 @@ function App() {
               onOpenPage={openSalesPage}
               items={items}
               onEdit={handleEdit}
-              onDelete={handleDelete}
+              onDelete={async (item) => {
+                try {
+                  const ok = window.confirm(
+                    `Are you sure you want to delete "${item.name}"?`
+                  );
+                  if (!ok) return;
+                  await deleteItemById(item.id);
+                  if (editingId === item.id) {
+                    setEditingId(null);
+                    setForm(initialForm);
+                    onClose();
+                  }
+                } catch (e: any) {
+                  console.error('Failed to delete item', e);
+                  alert(
+                    e?.message || 'Failed to delete item. Check Firebase config and rules.'
+                  );
+                }
+              }}
             />
           </>
         }

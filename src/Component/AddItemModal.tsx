@@ -49,8 +49,12 @@ export const AddItemModal = ({ onSave, onClose, form, setForm }: AddItemModalPro
 
   const handleSave = () => {
     if (!form.name || !form.price || !form.date) return alert("Please fill all required fields, including Name, BuyPrice, and BuyDate."); // minimal guard
+    // Robust ID generation across browsers
+    const newId = (globalThis as any).crypto?.randomUUID
+      ? (globalThis as any).crypto.randomUUID()
+      : Math.random().toString(36).slice(2) + Date.now();
     const item: Item = {
-      id: crypto.randomUUID(),
+      id: newId,
       name: form.name.trim(),
       price: Number(form.price),
       sellPrice: form.sellPrice ? Number(form.sellPrice) : undefined,
