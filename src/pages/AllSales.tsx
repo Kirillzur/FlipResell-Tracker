@@ -15,6 +15,8 @@ import type { Item } from "../Component/types";
 import AddItemModal, { type FormState } from "../Component/AddItemModal";
 import { subscribeItems, saveItem, deleteItemById } from "../services/items";
 import { FiMoreVertical } from "react-icons/fi";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 import { MdDelete, MdEdit } from "react-icons/md";
 
 // Items now fully managed by Firestore
@@ -40,6 +42,7 @@ const initialForm: FormState = {
 
 const AllSales = () => {
   const { open, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(initialForm);
 
@@ -82,6 +85,15 @@ const AllSales = () => {
             Full list of your items
           </Text>
         </Box>
+        <IconButton
+          aria-label="Go back"
+          size="sm"
+          variant="solid"
+          onClick={() => navigate("/")}
+          ml="10px"
+        >
+          <IoMdArrowRoundBack />
+        </IconButton>
       </Flex>
 
       {open && (
@@ -97,9 +109,10 @@ const AllSales = () => {
               setEditingId(null);
               onClose();
             } catch (e: any) {
-              console.error('Failed to save item', e);
+              console.error("Failed to save item", e);
               alert(
-                e?.message || 'Failed to save item. Check Firebase config and rules.'
+                e?.message ||
+                  "Failed to save item. Check Firebase config and rules."
               );
             }
           }}
@@ -124,7 +137,8 @@ const AllSales = () => {
       ) : (
         <Stack gap={4}>
           {items.map((it) => {
-            const profit = it.sellPrice != null ? it.sellPrice - it.price : undefined;
+            const profit =
+              it.sellPrice != null ? it.sellPrice - it.price : undefined;
             const daysHeld = daysBetween(it.date, it.sellDate);
             const mainAmount = it.sellPrice ?? it.price;
 
@@ -141,7 +155,12 @@ const AllSales = () => {
                 <Flex justify="space-between" align="start">
                   <Box>
                     <Heading size="md">{it.name}</Heading>
-                    <Text mt={1} fontSize="sm" textAlign="left" color="var(--secondary-color)">
+                    <Text
+                      mt={1}
+                      fontSize="sm"
+                      textAlign="left"
+                      color="var(--secondary-color)"
+                    >
                       {fmtAmount(mainAmount)}
                     </Text>
                   </Box>
@@ -151,32 +170,55 @@ const AllSales = () => {
                     </Text>
                     <Menu.Root>
                       <Menu.Trigger asChild>
-                        <IconButton aria-label="Open item menu" size="xs" variant="outline" ml="10px">
+                        <IconButton
+                          aria-label="Open item menu"
+                          size="xs"
+                          variant="outline"
+                          ml="10px"
+                        >
                           <FiMoreVertical />
                         </IconButton>
                       </Menu.Trigger>
-                      <Menu.Content position="absolute" top="100%" right="0" minW="180px" zIndex={1}>
-                        <Menu.Item cursor="pointer" value="Edit" onClick={() => handleEdit(it)}>
+                      <Menu.Content
+                        position="absolute"
+                        top="100%"
+                        right="0"
+                        minW="180px"
+                        zIndex={1}
+                      >
+                        <Menu.Item
+                          cursor="pointer"
+                          value="Edit"
+                          onClick={() => handleEdit(it)}
+                        >
                           <MdEdit />
                           <Box>Edit</Box>
                         </Menu.Item>
-                        <Menu.Item color="fg.error" cursor="pointer" value="Delete" onClick={async () => {
-                          try {
-                            const ok = window.confirm(`Are you sure you want to delete \"${it.name}\"?`);
-                            if (!ok) return;
-                            await deleteItemById(it.id);
-                            if (editingId === it.id) {
-                              setEditingId(null);
-                              setForm(initialForm);
-                              onClose();
+                        <Menu.Item
+                          color="fg.error"
+                          cursor="pointer"
+                          value="Delete"
+                          onClick={async () => {
+                            try {
+                              const ok = window.confirm(
+                                `Are you sure you want to delete \"${it.name}\"?`
+                              );
+                              if (!ok) return;
+                              await deleteItemById(it.id);
+                              if (editingId === it.id) {
+                                setEditingId(null);
+                                setForm(initialForm);
+                                onClose();
+                              }
+                            } catch (e: any) {
+                              console.error("Failed to delete item", e);
+                              alert(
+                                e?.message ||
+                                  "Failed to delete item. Check Firebase config and rules."
+                              );
                             }
-                          } catch (e: any) {
-                            console.error('Failed to delete item', e);
-                            alert(
-                              e?.message || 'Failed to delete item. Check Firebase config and rules.'
-                            );
-                          }
-                        }}>
+                          }}
+                        >
                           <MdDelete />
                           <Box>Delete...</Box>
                         </Menu.Item>
@@ -189,28 +231,49 @@ const AllSales = () => {
                 <Stack mt={4}>
                   <Flex justify="space-between">
                     <Text fontSize="sm" color="var(--secondary-color)">
-                      Buy: <Text as="span" color="var(--primary-color)">{fmtAmount(it.price)}</Text>
+                      Buy:{" "}
+                      <Text as="span" color="var(--primary-color)">
+                        {fmtAmount(it.price)}
+                      </Text>
                     </Text>
                     <Text fontSize="sm" color="var(--secondary-color)">
-                      Sell: <Text as="span" color="var(--primary-color)">{fmtAmount(it.sellPrice)}</Text>
+                      Sell:{" "}
+                      <Text as="span" color="var(--primary-color)">
+                        {fmtAmount(it.sellPrice)}
+                      </Text>
                     </Text>
                   </Flex>
                   <Flex justify="space-between">
                     <Text fontSize="sm" color="var(--secondary-color)">
-                      Buy date: <Text as="span" color="var(--primary-color)">{it.date || "—"}</Text>
+                      Buy date:{" "}
+                      <Text as="span" color="var(--primary-color)">
+                        {it.date || "—"}
+                      </Text>
                     </Text>
                     <Text fontSize="sm" color="var(--secondary-color)">
-                      Sell date: <Text as="span" color="var(--primary-color)">{it.sellDate || "—"}</Text>
+                      Sell date:{" "}
+                      <Text as="span" color="var(--primary-color)">
+                        {it.sellDate || "—"}
+                      </Text>
                     </Text>
                   </Flex>
                 </Stack>
 
                 {/* Bottom Row: Days + Profit */}
                 <Flex justify="space-between" align="center" mt={4}>
-                  <Badge px={3} py={1} borderRadius="var(--border-radius)" colorScheme="gray">
+                  <Badge
+                    px={3}
+                    py={1}
+                    borderRadius="var(--border-radius)"
+                    colorScheme="gray"
+                  >
                     {daysHeld != null ? `${daysHeld} days` : "Not sold"}
                   </Badge>
-                  <Text fontWeight="bold" fontSize="lg" color="var(--green-color)">
+                  <Text
+                    fontWeight="bold"
+                    fontSize="lg"
+                    color="var(--green-color)"
+                  >
                     {fmtAmount(profit)}
                   </Text>
                 </Flex>
